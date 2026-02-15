@@ -34,8 +34,10 @@ print(f"  • Model: {Fore.CYAN}{model}{Fore.WHITE}")
 print(f"  • System: {Fore.GREEN}Inteligentna ocena złożoności{Fore.WHITE}")
 print(f"  • Limit rekursji (safety): 10{Style.RESET_ALL}\n")
 
-# Proste zadanie testowe
-test_task = "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser."
+# Proste zadanie testowe (można nadpisać argumentem CLI)
+default_task = "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser."
+cli_task = " ".join(sys.argv[1:]).strip()
+test_task = cli_task or default_task
 
 print(f"{Fore.YELLOW}Zadanie testowe:{Style.RESET_ALL}")
 print(f"{test_task}\n")

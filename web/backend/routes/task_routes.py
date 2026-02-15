@@ -32,7 +32,7 @@ def api_task(task_id: str, results_dir: Path) -> dict:
 def api_run(payload: RunRequest, project_root: Path, base_root: Path) -> dict:
     description = payload.taskDescription or "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser."
     script_path = base_root / "scripts" / "test_run.py"
-    start_test_thread(script_path, project_root)
+    start_test_thread(script_path, project_root, [description])
     return {
         "status": "running",
         "message": "Uruchamianie testu w tle...",

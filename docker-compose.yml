@@ -10,4 +10,5 @@ services:
     volumes:
       - ./results:/app/results
       - ./config:/app/config
+      - ./web:/app/web
     restart: unless-stopped
