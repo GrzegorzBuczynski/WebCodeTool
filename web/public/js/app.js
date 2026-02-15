@@ -5,6 +5,8 @@ import { initExplorer, renderFileTree, collapseAllLevels, collapseNextLevel, exp
 import { openRootModal, bindRootModalEvents } from './modules/modal.js';
 import { initTasks, handleRunTask } from './modules/tasks.js';
 import { initializeTemplates } from './modules/templates.js';
+import { showNewFileModal, showNewFolderModal } from './modules/fileops.js';
+import { renderTabs } from './modules/tabs.js';
 
 function setActiveView(view) {
   state.activeView = view;
@@ -98,6 +100,8 @@ function bindMenuEvents() {
 function bindActionEvents() {
   const runBtn = document.getElementById('run-btn');
   const refreshBtn = document.getElementById('refresh-btn');
+  const newFileBtn = document.getElementById('new-file-btn');
+  const newFolderBtn = document.getElementById('new-folder-btn');
   
   if (runBtn) runBtn.addEventListener('click', handleRunTask);
   if (refreshBtn) {
@@ -105,6 +109,12 @@ function bindActionEvents() {
       await initExplorer();
       render();
     });
+  }
+  if (newFileBtn) {
+    newFileBtn.addEventListener('click', showNewFileModal);
+  }
+  if (newFolderBtn) {
+    newFolderBtn.addEventListener('click', showNewFolderModal);
   }
 }
 

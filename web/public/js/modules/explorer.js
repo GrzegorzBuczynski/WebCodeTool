@@ -1,6 +1,7 @@
 // File Explorer Component
 import { state, setStatus, render } from './state.js';
 import { loadFileTree, loadFile } from './api.js';
+import { handleDeleteFile } from './fileops.js';
 
 export async function initExplorer() {
   state.fileTree = await loadFileTree();
@@ -82,7 +83,52 @@ function renderFileNode(node, container, depth) {
     <span>${node.name}</span>
   `;
   row.onclick = () => selectFile(node.path);
+  
+  // Add context menu for files
+  row.oncontextmenu = (e) => {
+    e.preventDefault();
+    showContextMenu(e, node.path);
+  };
+  
   container.appendChild(row);
+}
+
+function showContextMenu(event, filePath) {
+  // Remove any existing context menu
+  const existingMenu = document.getElementById('context-menu');
+  if (existingMenu) existingMenu.remove();
+  
+  const menu = document.createElement('div');
+  menu.id = 'context-menu';
+  menu.className = 'fixed z-50 rounded border border-[#3c3c3c] bg-[#252526] shadow-lg';
+  menu.style.left = `${event.clientX}px`;
+  menu.style.top = `${event.clientY}px`;
+  
+  menu.innerHTML = `
+    <div class="py-1">
+      <button class="context-menu-item w-full px-4 py-2 text-left text-sm text-[#d4d4d4] hover:bg-[#007acc]">Delete</button>
+    </div>
+  `;
+  
+  document.body.appendChild(menu);
+  
+  const deleteBtn = menu.querySelector('.context-menu-item');
+  deleteBtn.addEventListener('click', () => {
+    menu.remove();
+    handleDeleteFile(filePath);
+  });
+  
+  // Close menu when clicking outside
+  const closeMenu = (e) => {
+    if (!menu.contains(e.target)) {
+      menu.remove();
+      document.removeEventListener('click', closeMenu);
+    }
+  };
+  
+  setTimeout(() => {
+    document.addEventListener('click', closeMenu);
+  }, 0);
 }
 
 function createTreeRow(depth, path) {

@@ -37,11 +37,13 @@ function renderFileEditor(editorEl, panelEl) {
   }
   const content = file.draft ?? file.content ?? '';
   const isDirty = file.isDirty ?? content !== (file.content ?? '');
+  
   editorEl.innerHTML = `
     <div class="flex h-full flex-col gap-0 overflow-hidden bg-[#1e1e1e]">
       <div class="flex items-center justify-between border-b border-[#3c3c3c] bg-[#252526] px-3 py-2 text-xs flex-shrink-0">
         <div class="text-[#8a8a8a]">${file.path}</div>
         <div class="flex items-center gap-2">
+          <span id="editor-cursor-pos" class="text-[10px] text-[#8a8a8a]">Ln 1, Col 1</span>
           <span id="editor-dirty-badge" class="rounded-full px-2 py-0.5 text-[10px] ${
             isDirty ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300'
           }">${isDirty ? 'UNSAVED' : 'SAVED'}</span>
@@ -51,21 +53,56 @@ function renderFileEditor(editorEl, panelEl) {
           <button id="editor-reload-btn" class="rounded border border-[#3c3c3c] bg-[#1e1e1e] px-2 py-1 hover:bg-white/10">Reload</button>
         </div>
       </div>
-      <textarea id="editor-textarea" rows="20" cols="200" class="flex-1 w-full resize-none bg-[#111] p-3 text-[13px] leading-6 text-[#d4d4d4] outline-none focus:ring-1 focus:ring-[#007acc] overflow-auto"></textarea>
+      <div class="flex flex-1 overflow-hidden">
+        <div id="editor-line-numbers" class="flex-shrink-0 border-r border-[#3c3c3c] bg-[#1e1e1e] px-2 py-3 text-right text-[13px] leading-6 text-[#858585] select-none overflow-hidden"></div>
+        <textarea id="editor-textarea" class="flex-1 w-full resize-none bg-[#111] p-3 text-[13px] leading-6 text-[#d4d4d4] outline-none focus:ring-1 focus:ring-[#007acc] overflow-auto" spellcheck="false"></textarea>
       </div>
-    `;
-      // <textarea id="editor-textarea" class="flex-1 w-full resize-none bg-[#111] p-3 text-[13px] leading-6 text-[#d4d4d4] outline-none focus:ring-1 focus:ring-[#007acc] overflow-auto"></textarea>
-      const textarea = editorEl.querySelector('#editor-textarea');
+    </div>
+  `;
+  
+  const textarea = editorEl.querySelector('#editor-textarea');
+  const lineNumbers = editorEl.querySelector('#editor-line-numbers');
   const saveBtn = editorEl.querySelector('#editor-save-btn');
   const reloadBtn = editorEl.querySelector('#editor-reload-btn');
   const badge = editorEl.querySelector('#editor-dirty-badge');
+  const cursorPos = editorEl.querySelector('#editor-cursor-pos');
+  
   if (textarea) {
     textarea.value = content;
+    
+    // Update line numbers
+    const updateLineNumbers = () => {
+      const lines = textarea.value.split('\n').length;
+      lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+    };
+    
+    // Update cursor position
+    const updateCursorPosition = () => {
+      const pos = textarea.selectionStart;
+      const textBeforeCursor = textarea.value.substring(0, pos);
+      const line = textBeforeCursor.split('\n').length;
+      const col = textBeforeCursor.split('\n').pop().length + 1;
+      if (cursorPos) {
+        cursorPos.textContent = `Ln ${line}, Col ${col}`;
+      }
+    };
+    
+    updateLineNumbers();
+    updateCursorPosition();
+    
     textarea.addEventListener('input', () => {
       file.draft = textarea.value;
       file.isDirty = file.draft !== (file.content ?? '');
       updateFileEditorState(saveBtn, badge, file.isDirty);
+      updateLineNumbers();
       render();
+    });
+    
+    textarea.addEventListener('keyup', updateCursorPosition);
+    textarea.addEventListener('click', updateCursorPosition);
+    textarea.addEventListener('scroll', () => {
+      // Sync line numbers scroll with textarea
+      lineNumbers.scrollTop = textarea.scrollTop;
     });
   }
   if (saveBtn) {
