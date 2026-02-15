@@ -5,7 +5,11 @@ from typing import Optional
 
 
 class Settings(BaseSettings):
-    """Application settings."""
+    """Application settings.
+    
+    Configuration can be set via environment variables or a .env file.
+    Create a .env file from .env.example to customize settings.
+    """
     
     # Server settings
     host: str = "0.0.0.0"

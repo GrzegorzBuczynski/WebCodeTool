@@ -3,6 +3,7 @@
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 from enum import Enum
+import uuid
 
 
 class AgentRole(str, Enum):
@@ -23,7 +24,7 @@ class Message(BaseModel):
 
 class ToolCall(BaseModel):
     """Tool call representation."""
-    id: str = Field(default_factory=lambda: f"call_{id(object())}")
+    id: str = Field(default_factory=lambda: f"call_{uuid.uuid4().hex[:16]}")
     name: str
     parameters: Dict[str, Any]
 

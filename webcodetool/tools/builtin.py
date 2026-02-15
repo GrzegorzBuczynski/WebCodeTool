@@ -15,6 +15,14 @@ async def read_file(path: str) -> str:
     """Read contents of a file."""
     try:
         file_path = Path(path).resolve()
+        # Validate path is within current working directory or /tmp for tests
+        working_dir = Path.cwd().resolve()
+        tmp_dir = Path("/tmp").resolve()
+        
+        path_str = str(file_path)
+        if not (path_str.startswith(str(working_dir)) or path_str.startswith(str(tmp_dir))):
+            return "Error: Access denied - path outside allowed directories"
+        
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
     except Exception as e:
@@ -25,6 +33,14 @@ async def write_file(path: str, content: str) -> str:
     """Write content to a file."""
     try:
         file_path = Path(path).resolve()
+        # Validate path is within current working directory or /tmp for tests
+        working_dir = Path.cwd().resolve()
+        tmp_dir = Path("/tmp").resolve()
+        
+        path_str = str(file_path)
+        if not (path_str.startswith(str(working_dir)) or path_str.startswith(str(tmp_dir))):
+            return "Error: Access denied - path outside allowed directories"
+        
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)

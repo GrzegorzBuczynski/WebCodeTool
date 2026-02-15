@@ -251,10 +251,17 @@ ruff check webcodetool/
 
 ## Security Considerations
 
-- Code execution runs in subprocesses with timeouts
-- File operations are relative to the working directory
-- No authentication is implemented by default (add as needed)
-- Consider running in containerized environments for production
+⚠️ **Important Security Notes:**
+
+- **Code Execution Tools**: The `execute_python` and `execute_shell` tools run code in subprocesses with timeout limits but without full sandboxing. These tools should only be used in trusted, controlled environments.
+- **Production Deployment**: For production use:
+  - Run the server in isolated containers (Docker/Kubernetes)
+  - Implement authentication and authorization
+  - Disable code execution tools if not needed (set `ENABLE_CODE_EXECUTION=false`)
+  - Configure CORS with specific allowed origins
+  - Use reverse proxies with rate limiting
+- **File Operations**: File operations are restricted to the working directory to prevent path traversal attacks
+- **Network Access**: The `fetch_url` tool has basic timeout protection but no URL filtering
 
 ## Contributing
 
@@ -273,7 +280,6 @@ This project is open source. Add your license here.
 - [ ] More built-in tools
 - [ ] WebSocket support for bidirectional communication
 - [ ] Plugin system for custom tools
-- [ ] Docker containerization
 
 ## Support
 

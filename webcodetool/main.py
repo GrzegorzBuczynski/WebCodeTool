@@ -30,10 +30,11 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+# Note: Configure allow_origins with specific domains in production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # Set to False when allowing all origins
     allow_methods=["*"],
     allow_headers=["*"],
 )
