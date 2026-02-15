@@ -1,6 +1,9 @@
 /**
  * Server Express - backend dla UI systemu wieloagentowego
  */
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '..', 'config', '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -17,9 +20,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ścieżka do folderu results
+// Ścieżka do folderu results i workspace
 const RESULTS_DIR = path.join(__dirname, '..', 'results');
-const ROOT_DIR = path.join(__dirname, '..');
+const WORKSPACE_DIR = process.env.WORKSPACE_DIR || path.join(__dirname, '..');
+const ROOT_DIR = path.resolve(WORKSPACE_DIR);
 const FS_EXCLUDE = new Set(['node_modules', 'venv', '__pycache__', '.git', 'results']);
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
@@ -206,7 +210,7 @@ app.post('/api/run', (req, res) => {
  * GET /api/fs/root - aktualny katalog główny
  */
 app.get('/api/fs/root', (req, res) => {
-  res.json({ root: '.' });
+  res.json({ root: WORKSPACE_DIR });
 });
 
 /**
@@ -214,8 +218,8 @@ app.get('/api/fs/root', (req, res) => {
  */
 app.post('/api/fs/root', (req, res) => {
   const { root } = req.body;
-  // W prostej implementacji zawsze używamy ROOT_DIR
-  res.json({ root: root || '.' });
+  // W prostej implementacji zawsze używamy WORKSPACE_DIR z .env
+  res.json({ root: root || WORKSPACE_DIR });
 });
 
 /**

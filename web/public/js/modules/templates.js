@@ -31,7 +31,7 @@ async function initializeTemplates() {
   
   // Create middle grid container
   const middleGrid = document.createElement('div');
-  middleGrid.className = 'grid grid-cols-[52px_300px_1fr]';
+  middleGrid.className = 'grid grid-cols-[52px_300px_1fr] overflow-hidden';
   
   // Load and insert sidebar
   const sidebarHTML = await loadTemplate('sidebar');
