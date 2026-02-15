@@ -178,7 +178,8 @@ class CoordinatorAgent(BaseAgent):
                  model: Optional[str] = None):
         super().__init__("Coordinator", "Task Decomposition", api_key, provider, model)
         
-    def decompose_task(self, task: Task, max_subtasks: int, task_manager=None) -> List[str]:
+    def decompose_task(self, task: Task, max_subtasks: int, task_manager=None,
+                       strict: bool = False, simplify_reason: Optional[str] = None) -> List[str]:
         """Dekomponuje zadanie na podzadania"""
         self.log(f"Analizuję zadanie: {task.description}", Fore.CYAN)
         
@@ -187,6 +188,17 @@ class CoordinatorAgent(BaseAgent):
             self.log("Zadanie ocenione jako atomowe - nie wymaga dekompozycji", Fore.YELLOW)
             return []
         
+        strict_rules = ""
+        if strict:
+            strict_rules = """
+
+    TRYB UPROSZCZONY (WYMUSZONY):
+    - Każde podzadanie ma być JEDNOKROKOWE i maksymalnie proste
+    - Potencjalny output podzadania: KRÓTKI lub ŚREDNI
+    - Unikaj szerokich analiz, zamiast tego twórz mikro-kroki
+    - Jeśli podzadanie brzmi jak analiza lub raport, rozbij je na mniejsze czynności
+    """
+
         system_prompt = f"""Jesteś ekspertem w dekompozycji zadań. Twoim zadaniem jest rozłożenie złożonego 
 zadania na dokładnie {max_subtasks} mniejszych, wykonalnych podzadań.
 
@@ -196,6 +208,7 @@ Zasady:
 3. Razem podzadania powinny w pełni realizować główne zadanie
 4. Zwróć DOKŁADNIE {max_subtasks} podzadań, każde w osobnej linii, numerowane
 5. Nie zwracaj więcej ani mniej niż {max_subtasks} podzadań"""
+        system_prompt += strict_rules
 
         parent_context = ""
         if task.parent_id and task_manager:
@@ -203,11 +216,16 @@ Zasady:
             if parent_task:
                 parent_context = f"\nKontekst z zadania nadrzędnego: {parent_task.description}"
 
-        user_prompt = f"""Główne zadanie (poziom {task.level}):
-{task.description}
-{parent_context}
+        simplify_note = ""
+        if simplify_reason:
+            simplify_note = f"\nUwaga: {simplify_reason}"
 
-Rozłóż to zadanie na DOKŁADNIE {max_subtasks} podzadań."""
+        user_prompt = f"""Główne zadanie (poziom {task.level}):
+    {task.description}
+    {parent_context}
+    {simplify_note}
+
+    Rozłóż to zadanie na DOKŁADNIE {max_subtasks} podzadań."""
 
         response = self._call_llm(system_prompt, user_prompt)
         
@@ -435,7 +453,9 @@ class MasterOrchestrator:
             "total_tasks": 0,
             "decomposed": 0,
             "executed_directly": 0,
-            "max_level_reached": 0
+            "max_level_reached": 0,
+            "strict_decompositions": 0,
+            "simplification_retries": 0
         }
         self.execution_start_time = time.time()
         
@@ -448,6 +468,31 @@ class MasterOrchestrator:
         executor = self.executors[self.executor_index]
         self.executor_index = (self.executor_index + 1) % len(self.executors)
         return executor
+
+    def _should_force_simplification(self, task: Task, analysis: Dict[str, Any]) -> bool:
+        """Określa czy wymusić uproszczoną dekompozycję"""
+        output_size = analysis.get("output_size")
+        complexity = analysis.get("complexity")
+        return (
+            task.level >= 3
+            or output_size in {"DŁUGI", "BARDZO_DŁUGI"}
+            or complexity in {"WYSOKA", "BARDZO_WYSOKA"}
+        )
+
+    def _count_complex_subtasks(self, subtask_descriptions: List[str], level: int) -> int:
+        """Szacuje ile podzadań nadal wygląda na złożone"""
+        complex_count = 0
+        for desc in subtask_descriptions:
+            temp_task = Task(
+                id="_tmp",
+                description=desc,
+                task_type=TaskType.SUBTASK,
+                level=level
+            )
+            analysis = self.complexity_analyzer.should_decompose(temp_task)
+            if analysis.get("should_split"):
+                complex_count += 1
+        return complex_count
     
     def process_task_recursive(self, task: Task) -> bool:
         """Rekursywnie przetwarza zadanie z inteligentną oceną potrzeby podziału"""
@@ -476,7 +521,16 @@ class MasterOrchestrator:
         
         # Krok 2: Dekompozycja zadania
         num_subtasks = complexity_analysis["num_subtasks"]
-        subtask_descriptions = self.coordinator.decompose_task(task, num_subtasks, self.task_manager)
+        strict = self._should_force_simplification(task, complexity_analysis)
+        if strict:
+            self.decomposition_stats["strict_decompositions"] += 1
+        subtask_descriptions = self.coordinator.decompose_task(
+            task,
+            num_subtasks,
+            self.task_manager,
+            strict=strict,
+            simplify_reason="Wymuszono prostsze, atomowe podzadania"
+        )
         
         if not subtask_descriptions:
             # Coordinator nie stworzył podzadań - wykonaj bezpośrednio
@@ -492,6 +546,22 @@ class MasterOrchestrator:
             # Po eliminacji duplikatów nie zostało nic - wykonaj zadanie bezpośrednio
             self.decomposition_stats["executed_directly"] += 1
             return self._execute_atomic_task(task)
+
+        # Krok 3.1: Feedback loop - jeśli podzadania nadal złożone, spróbuj uprościć
+        if strict and len(subtask_descriptions) > 0:
+            complex_count = self._count_complex_subtasks(subtask_descriptions, task.level + 1)
+            if complex_count / len(subtask_descriptions) >= 0.5:
+                self.decomposition_stats["simplification_retries"] += 1
+                subtask_descriptions = self.coordinator.decompose_task(
+                    task,
+                    num_subtasks,
+                    self.task_manager,
+                    strict=True,
+                    simplify_reason="Podzadania nadal złożone - generuj bardziej atomowe kroki"
+                )
+                subtask_descriptions = self.duplication_detector.detect_and_eliminate_duplicates(
+                    subtask_descriptions, task
+                )
         
         # Utwórz podzadania
         self.decomposition_stats["decomposed"] += 1
@@ -541,6 +611,8 @@ class MasterOrchestrator:
         print(f"Podzielonych na podzadania: {stats['decomposed']}")
         print(f"Wykonanych bezpośrednio: {stats['executed_directly']}")
         print(f"Maksymalny poziom zagnieżdżenia: {stats['max_level_reached']}")
+        print(f"Dekompozycje w trybie uproszczonym: {stats.get('strict_decompositions', 0)}")
+        print(f"Ponowne uproszczenia podzadań: {stats.get('simplification_retries', 0)}")
         print(f"Średnia złożoność: {stats['decomposed'] / max(stats['total_tasks'], 1):.2%} zadań wymagało podziału{Style.RESET_ALL}\n")
     
     def save_results(self, task: Task):
