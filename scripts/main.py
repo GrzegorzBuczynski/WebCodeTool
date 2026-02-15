@@ -70,8 +70,8 @@ def print_summary(task_manager: TaskManager, main_task_id: str):
 
 def main():
     """Główna funkcja programu"""
-    # Załaduj zmienne środowiskowe
-    load_dotenv(dotenv_path=ROOT / "config" / ".env")
+    # Załaduj zmienne środowiskowe z głównego katalogu projektu
+    load_dotenv(dotenv_path=ROOT / ".env")
     
     # Sprawdź konfigurację
     provider = os.getenv("AI_PROVIDER", "openai")

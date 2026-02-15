@@ -16,8 +16,8 @@ from cad_ai.persistence import PersistenceManager
 
 init(autoreset=True)
 
-# Załaduj zmienne środowiskowe
-load_dotenv(dotenv_path=ROOT / "config" / ".env")
+# Załaduj zmienne środowiskowe z głównego katalogu projektu
+load_dotenv(dotenv_path=ROOT / ".env")
 
 print(f"{Fore.CYAN}{'='*80}")
 print(f"{Fore.CYAN}  Test Systemu Wieloagentowego")

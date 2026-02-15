@@ -14,7 +14,8 @@ from cad_ai.task_manager import TaskManager, TaskType
 from cad_ai.agents import MasterOrchestrator
 
 init(autoreset=True)
-load_dotenv(dotenv_path=ROOT / "config" / ".env")
+# Załaduj zmienne środowiskowe z głównego katalogu projektu
+load_dotenv(dotenv_path=ROOT / ".env")
 
 print(f"{Fore.CYAN}Test Szybki - System Wieloagentowy{Style.RESET_ALL}\n")
 

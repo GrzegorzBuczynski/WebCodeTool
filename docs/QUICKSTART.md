@@ -24,27 +24,51 @@ pip install -r requirements.txt
 
 ### 2️⃣ Konfiguracja API (2 minuty)
 
+**WAŻNE:** Utwórz plik `.env` w głównym katalogu projektu (nie w `config/`!)
+
 #### Opcja A: OpenRouter (REKOMENDOWANA - tańsza)
 
 1. Idź na https://openrouter.ai/keys
 2. Skopiuj klucz (zaczyna się od `sk-or-v1-`)
-3. Utwórz `.env`:
+3. Utwórz `.env` w katalogu głównym projektu:
 
+```bash
+# Skopiuj przykładowy plik konfiguracji
+cp .env.example .env
+
+# Następnie edytuj i dodaj swój klucz API
+nano .env
+```
+
+Lub utwórz ręcznie:
 ```bash
 cat > .env << 'EOF'
 AI_PROVIDER=openrouter
 API_KEY=sk-or-v1-TWOJ_KLUCZ_TUTAJ
 MODEL=meta-llama/llama-2-70b-chat
+PORT=3000
+WORKSPACE_DIR=.
 EOF
 ```
 
 #### Opcja B: OpenAI (oficjalny)
 
 ```bash
+# Skopiuj przykładowy plik konfiguracji
+cp .env.example .env
+
+# Następnie edytuj i dodaj swój klucz API
+nano .env
+```
+
+Lub utwórz ręcznie:
+```bash
 cat > .env << 'EOF'
 AI_PROVIDER=openai
 API_KEY=sk-TWOJ_KLUCZ_TUTAJ
 MODEL=gpt-4o-mini
+PORT=3000
+WORKSPACE_DIR=.
 EOF
 ```
 
@@ -56,11 +80,21 @@ EOF
 # Potem uruchom:
 ollama serve
 
-# W innym terminalu:
+# W innym terminalu, skopiuj przykładowy plik konfiguracji:
+cp .env.example .env
+
+# Następnie edytuj:
+nano .env
+```
+
+Lub utwórz ręcznie:
+```bash
 cat > .env << 'EOF'
 AI_PROVIDER=ollama
 MODEL=llama2
 OLLAMA_BASE_URL=http://localhost:11434
+PORT=3000
+WORKSPACE_DIR=.
 EOF
 ```
 

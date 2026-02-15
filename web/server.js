@@ -1,8 +1,8 @@
 /**
  * Server Express - backend dla UI systemu wieloagentowego
  */
+// Załaduj zmienne środowiskowe z głównego katalogu projektu
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
-require('dotenv').config({ path: require('path').join(__dirname, '..', 'config', '.env') });
 
 const express = require('express');
 const cors = require('cors');
