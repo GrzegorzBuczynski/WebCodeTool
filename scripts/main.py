@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from cad_ai.task_manager import TaskManager, TaskType, TaskStatus
 from cad_ai.agents import MasterOrchestrator
+from cad_ai.persistence import PersistenceManager
 
 init(autoreset=True)
 
@@ -118,8 +119,11 @@ i obsługę klienta. Każdy aspekt powinien być szczegółowo omówiony."""
     
     input(f"{Fore.YELLOW}Naciśnij Enter aby rozpocząć...{Style.RESET_ALL}")
     
+    # Inicjalizacja persistencji
+    persistence_manager = PersistenceManager(base_dir=str(ROOT / "results"))
+    
     # Inicjalizacja systemu
-    task_manager = TaskManager()
+    task_manager = TaskManager(persistence_manager=persistence_manager)
     orchestrator = MasterOrchestrator(
         task_manager=task_manager,
         api_key=api_key,

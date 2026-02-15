@@ -293,8 +293,34 @@ class VerificationAgent(BaseAgent):
                 "issues": ["Zadanie nie zostało wykonane"]
             }
         
+        # === VALUE-ADDED FILTER (Heurystyka Cięcia nr 3) ===
+        # Sprawdź czy wynik jest "pusty" (np. tylko instrukcje)
+        value_added_check = self._check_value_added(task)
+        
+        if not value_added_check["has_value"]:
+            self.log(f"✗ BRAK WARTOŚCI: Wynik jest pusty - tylko instrukcje bez treści", Fore.RED)
+            return {
+                "passed": False,
+                "score": 0.0,
+                "feedback": f"Wynik nie ma wartości dodanej. {value_added_check['reason']}",
+                "issues": ["Wynik zawiera tylko instrukcje, brakuje rzeczywistych danych/analizy/kodu"]
+            }
+        
         system_prompt = """Jesteś ekspertem w kontroli jakości i weryfikacji zadań.
 Twoim zadaniem jest ocena czy zadanie zostało wykonane poprawnie i kompletnie.
+
+KRYTERIA WARTOŚCI DODANEJ (Value-Added):
+✓ AKCEPTOWALNE wyniki zawierają co najmniej jedno z:
+  - Analiza (insights, wnioski, interpretacja)
+  - Tekst (opisowe wyjaśnienia, szczegółowe omówienia)
+  - Kod (skrypty, funkcje, implementacja)
+  - Tabela/Dane (strukturyzowane dane, metryki)
+
+✗ NIEAKCEPTOWALNE wyniki zawierają TYLKO:
+  - "Szukaj tu..." (instrukcje bez treści)
+  - "Przeczytaj plik..." (linki bez analizy)
+  - "Użyj API..." (wskazówki bez implementacji)
+  - "Sprawdź dokumentację..." (referencje bez kontekstu)
 
 Zwróć odpowiedź w formacie:
 OCENA: [PASS/FAIL]
@@ -308,7 +334,7 @@ PROBLEMY: [Lista problemów lub "Brak"]"""
 Wynik wykonania:
 {task.result}
 
-Oceń jakość wykonania zadania."""
+Oceń jakość wykonania zadania. Sprawdź czy zawiera RZECZYWISTĄ WARTOŚĆ (analizę, tekst, kod, dane)."""
 
         response = self._call_llm(system_prompt, user_prompt)
         
@@ -321,6 +347,82 @@ Oceń jakość wykonania zadania."""
             self.log(f"✗ Weryfikacja nie powiodła się (wynik: {verification['score']}/10)", Fore.RED)
         
         return verification
+    
+    def _check_value_added(self, task: Task) -> Dict[str, Any]:
+        """Sprawdza czy wynik ma wartość dodaną (nie jest pusty/instrukcją)"""
+        result = task.result.lower() if task.result else ""
+        
+        # Wskaźniki "pustych" wyników
+        empty_indicators = [
+            "szukaj",
+            "wyszukaj",
+            "sprawdź",
+            "przeczytaj",
+            "przejdź do",
+            "odwiedź",
+            "kliknij",
+            "użyj api",
+            "użyj biblioteki",
+            "skontaktuj się",
+            "zapytaj",
+            "jaki jest",
+            "jak znaleźć",
+            "gdzie znaleźć",
+            "instrukcja:",
+            "przewodnik:",
+            "linki do",
+            "referencje do",
+            "zobacz dokumentację",
+            "dokumentacja",
+            "handbook",
+        ]
+        
+        # Wskaźniki "pełnych" wyników
+        value_indicators = [
+            "analiza",
+            "wynik",
+            "dane",
+            "statystyka",
+            "wykazuje",
+            "pokazuje",
+            "na podstawie",
+            "wyliczenie",
+            "zaproponować",
+            "rekomendacja",
+            "kod",
+            "import",
+            "tabela",
+            "tablica",
+            "liczba:",
+            "wartość:",
+            "procent",
+            "%",
+            "ponad 80%",
+        ]
+        
+        empty_count = sum(1 for indicator in empty_indicators if indicator in result)
+        value_count = sum(1 for indicator in value_indicators if indicator in result)
+        
+        # Jeśli pusty wskaźnik pojawia się 3+ razy i nie ma wartości, to fail
+        if empty_count >= 3 and value_count < 2:
+            return {
+                "has_value": False,
+                "reason": "Wynik zawiera głównie instrukcje ('szukaj', 'sprawdź', etc.) bez rzeczywistych danych."
+            }
+        
+        # Jeśli wynik jest za krótki (< 50 znaków), to nie ma wartości
+        if len(result) < 50:
+            return {
+                "has_value": False,
+                "reason": "Wynik jest zbyt krótki - przypomina instrukcję, a nie kompletne rozwiązanie."
+            }
+        
+        # Jeśli wynik zawiera wartościowe wskaźniki, to OK
+        if value_count >= 1:
+            return {"has_value": True, "reason": ""}
+        
+        # Domyślnie akceptuj (LLM zrobi ostateczną ocenę)
+        return {"has_value": True, "reason": ""}
     
     def _parse_verification(self, response: str) -> Dict[str, Any]:
         """Parsuje odpowiedź weryfikacyjną"""
@@ -350,6 +452,85 @@ Oceń jakość wykonania zadania."""
                     verification["issues"] = [issues_str]
         
         return verification
+
+
+class SemanticLoopDetectorAgent(BaseAgent):
+    """Agent wykrywający pętle biurokratyczne - gdy zadanie na poziomie 4 == zadaniu na poziomie 1"""
+    
+    def __init__(self, api_key: Optional[str] = None, provider: Optional[str] = None,
+                 model: Optional[str] = None):
+        super().__init__("SemanticLoopDetector", "Loop Detection", api_key, provider, model)
+    
+    def detect_semantic_loops(self, task: Task, task_manager: TaskManager) -> Dict[str, Any]:
+        """Wykrywa semantyczne pętle - zadanie na głębokim poziomie identyczne ze swoim przodkiem"""
+        
+        # Zbierz wszystkich przodków
+        ancestors = []
+        current = task
+        while current.parent_id:
+            parent = task_manager.get_task(current.parent_id)
+            if parent:
+                ancestors.append(parent)
+                current = parent
+            else:
+                break
+        
+        if not ancestors:
+            return {"loop_detected": False, "ancestor_match": None}
+        
+        self.log(f"Sprawdzam {task.description[:40]}... względem {len(ancestors)} przodków", Fore.MAGENTA)
+        
+        # Porównaj z każdym przodkiem
+        for ancestor in ancestors:
+            system_prompt = """Jesteś ekspertem w analizie semantycznej. 
+Twoim zadaniem jest sprawdzić czy dwa zadania są semantycznie identyczne lub prawie identyczne.
+
+Porównaj dwa zadania:
+1. Czy robią dokładnie to samo?
+2. Czy jedno jest podziałem drugiego (co sugerowałoby pętlę)?
+3. Czy są komplementarne czy redundantne?
+
+Odpowiedz w formacie:
+IDENTYCZNE: [TAK/NIE]
+STOPIEŃ_PODOBIEŃSTWA: [0-100]
+PĘTLA: [TAK/NIE]
+UZASADNIENIE: [krótkie wyjaśnienie]"""
+
+            user_prompt = f"""Zadanie nadrzędne (Level {ancestor.level}):
+{ancestor.description}
+
+Zadanie potomne (Level {task.level}):
+{task.description}
+
+Sprawdź czy są semantycznie identyczne lub czy zadanie potomne wciela się w pętlę do przodka."""
+
+            response = self._call_llm(system_prompt, user_prompt)
+            
+            # Parsuj odpowiedź
+            is_loop = "PĘTLA: TAK" in response.upper()
+            similarity = 0
+            try:
+                for line in response.split('\n'):
+                    if 'STOPIEŃ_PODOBIEŃSTWA' in line or 'STOPIEN_PODOBIENSTWA' in line:
+                        import re
+                        nums = re.findall(r'\d+', line)
+                        if nums:
+                            similarity = int(nums[0])
+                        break
+            except:
+                pass
+            
+            if is_loop or similarity > 85:
+                self.log(f"🔄 PĘTLA WYKRYTA: '{task.description[:40]}...' powtarza '{ancestor.description[:40]}...'", Fore.RED)
+                return {
+                    "loop_detected": True,
+                    "ancestor_match": ancestor,
+                    "similarity": similarity,
+                    "analysis": response
+                }
+        
+        self.log(f"✓ Brak pętli semantycznej", Fore.GREEN)
+        return {"loop_detected": False, "ancestor_match": None}
 
 
 class DuplicationDetectorAgent(BaseAgent):
@@ -427,6 +608,7 @@ class MasterOrchestrator:
         self.complexity_analyzer = ComplexityAnalyzerAgent(api_key, provider, model)
         self.coordinator = CoordinatorAgent(api_key, provider, model)
         self.duplication_detector = DuplicationDetectorAgent(api_key, provider, model)
+        self.semantic_loop_detector = SemanticLoopDetectorAgent(api_key, provider, model)
         self.verifier = VerificationAgent(api_key, provider, model)
         self.executors = [ExecutorAgent(i, api_key, provider, model) for i in range(1, 6)]
         self.executor_index = 0
@@ -460,6 +642,13 @@ class MasterOrchestrator:
             task.level
         )
         
+        # === MAX DEPTH GUARD (Heurystyka Cięcia nr 1) ===
+        # Jeśli poziom > 3, natychmiast przejdź do Direct Completion
+        if task.level > 3:
+            self.log(f"⚠ LIMIT GŁĘBOKOŚCI: Zadanie na poziomie {task.level} > 3 -> wymuszam bezpośrednie wykonanie", Fore.RED)
+            self.decomposition_stats["executed_directly"] += 1
+            return self._execute_atomic_task(task)
+        
         # Safety limit - ochrona przed nieskończoną rekursją
         if task.level >= self.max_recursion_depth:
             self.log(f"⚠ UWAGA: Osiągnięto limit bezpieczeństwa ({self.max_recursion_depth}) - wymuszam wykonanie", Fore.RED)
@@ -476,6 +665,8 @@ class MasterOrchestrator:
         
         # Krok 2: Dekompozycja zadania
         num_subtasks = complexity_analysis["num_subtasks"]
+        # === COMPLEXITY FACTOR: Hard cap na 5 podzadań (Heurystyka Cięcia nr 2) ===
+        num_subtasks = min(num_subtasks, 5)
         subtask_descriptions = self.coordinator.decompose_task(task, num_subtasks, self.task_manager)
         
         if not subtask_descriptions:
@@ -490,6 +681,17 @@ class MasterOrchestrator:
         
         if not subtask_descriptions:
             # Po eliminacji duplikatów nie zostało nic - wykonaj zadanie bezpośrednio
+            self.decomposition_stats["executed_directly"] += 1
+            return self._execute_atomic_task(task)
+        
+        # === SEMANTIC LOOP DETECTION (Heurystyka Cięcia nr 4) ===
+        # Sprawdź czy któreś z nowych podzadań ma semantyczną pętlę z przodkami
+        loop_check = self.semantic_loop_detector.detect_semantic_loops(task, self.task_manager)
+        
+        if loop_check["loop_detected"]:
+            self.log(f"⚠ PĘTLA BIUROKRATYCZNA WYKRYTA: Zadanie powtarza się - scalanie", Fore.RED)
+            self.log(f"  Merge: Level {loop_check['ancestor_match'].level} <- Level {task.level}", Fore.YELLOW)
+            # Zamiast dalej dzielić, wykonaj zadanie jako atomic
             self.decomposition_stats["executed_directly"] += 1
             return self._execute_atomic_task(task)
         
