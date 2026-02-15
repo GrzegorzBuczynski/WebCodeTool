@@ -1,0 +1,21 @@
+{
+  "name": "multi-agent-ai-ui",
+  "version": "1.0.0",
+  "description": "Web UI dla systemu wieloagentowego z interfejsem przypominającym VS Code",
+  "main": "web/server.js",
+  "scripts": {
+    "start": "node web/server.js",
+    "dev": "nodemon web/server.js"
+  },
+  "keywords": ["ai", "agents", "task-decomposition"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "main_task_id": "task_0002",
+  "main_task_description": "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.",
+  "total_tasks": 1,
+  "hierarchy": {
+    "id": "task_0002",
+    "description": "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.",
+    "type": "main",
+    "status": "verified",
+    "level": 0,
+    "verified": true,
+    "subtasks": [],
+    "result_preview": "**Plan obiadu dla 4 osób:**\n\n1. **Zupa: Zupa pomidorowa**\n   - Składniki:\n     - 800 g pomidorów w puszce\n     - 1 cebula\n     - 2 ząbki czosnku\n     - 1 litr bulionu warzywnego\n     - 2 łyżki oliwy z"
+  },
+  "timestamp": "2026-02-08T05:55:14.325778"
+}

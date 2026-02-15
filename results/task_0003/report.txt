@@ -1,0 +1,89 @@
+
+================================================================================
+RAPORT WYKONANIA ZADANIA
+================================================================================
+
+Data: 2026-02-08 05:55:37
+Czas wykonania: 8.50 sekund
+
+================================================================================
+ZADANIE GŁÓWNE
+================================================================================
+ID: task_0003
+Opis: Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.
+Status: verified
+Zweryfikowane: TAK
+
+================================================================================
+STATYSTYKI
+================================================================================
+Wszystkich zadań: 1
+Podzielonych: 0
+Wykonanych bezpośrednio: 1
+Maksymalny poziom: 0
+
+================================================================================
+WYNIK
+================================================================================
+Oto zaplanowany prosty obiad dla 4 osób:
+
+### Menu:
+
+**Zupa: Zupa pomidorowa z makaronem**
+- Składniki:
+  - 800 g pomidorów (świeżych lub z puszki)
+  - 1 cebula
+  - 2 ząbki czosnku
+  - 1 litr bulionu warzywnego
+  - 200 g makaronu (np. świderki)
+  - Sól, pieprz, bazylia (do smaku)
+- Przygotowanie:
+  1. Na patelni podsmażyć cebulę i czosnek.
+  2. Dodać pomidory i bulion, gotować przez 20 minut.
+  3. Zmiksować na gładką masę, doprawić.
+  4. Ugotować makaron według instrukcji, dodać do zupy przed podaniem.
+
+**Drugie danie: Kurczak pieczony z ziemniakami i warzywami**
+- Składniki:
+  - 4 udka kurczaka
+  - 800 g ziemniaków
+  - 400 g mieszanki warzyw (np. marchew, brokuły, papryka)
+  - Przyprawy: sól, pieprz, papryka słodka, oliwa z oliwek
+- Przygotowanie:
+  1. Rozgrzać piekarnik do 200°C.
+  2. Ziemniaki pokroić na ćwiartki, warzywa na kawałki.
+  3. Kurczaka przyprawić i ułożyć w naczyniu do pieczenia z ziemniakami i warzywami.
+  4. Polać oliwą, piec przez 45 minut.
+
+**Deser: Krem budyniowy z owocami**
+- Składniki:
+  - 1 opakowanie budyniu waniliowego (40 g)
+  - 500 ml mleka
+  - 200 g owoców sezonowych (np. truskawki, maliny)
+  - Cukier (do smaku)
+- Przygotowanie:
+  1. Ugotować budyń zgodnie z instrukcją, dodać cukier do smaku.
+  2. Po wystudzeniu, podać z pokrojonymi owocami.
+
+### Podsumowanie:
+Obiad dla 4 osób składa się z:
+- Zupy pomidorowej z makaronem
+- Pieczonego kurczaka z ziemniakami i warzywami
+- Kremu budyniowego z owocami
+
+Koszt składników (przybliżony):
+- Zupa: 15 zł
+- Drugie danie: 30 zł
+- Deser: 10 zł
+- **Łączny koszt: 55 zł**
+
+Obiad można przygotować w około 1,5 godziny.
+
+================================================================================
+WERYFIKACJA
+================================================================================
+
+Status: PASS
+Ocena: 9.5/10.0
+Feedback: Zadanie zostało wykonane poprawnie i kompletnie. Menu zawiera wszystkie trzy elementy: zupę, drugie danie i deser, a także szczegółowe składniki i instrukcje przygotowania. Koszt składników został oszacowany, co jest przydatne, a całkowity czas przygotowania jest realistyczny.
+Problemy: Brak

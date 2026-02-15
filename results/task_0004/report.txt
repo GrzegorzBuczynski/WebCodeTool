@@ -1,0 +1,93 @@
+
+================================================================================
+RAPORT WYKONANIA ZADANIA
+================================================================================
+
+Data: 2026-02-08 05:14:51
+Czas wykonania: 10.16 sekund
+
+================================================================================
+ZADANIE GŁÓWNE
+================================================================================
+ID: task_0004
+Opis: Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.
+Status: verified
+Zweryfikowane: TAK
+
+================================================================================
+STATYSTYKI
+================================================================================
+Wszystkich zadań: 1
+Podzielonych: 0
+Wykonanych bezpośrednio: 1
+Maksymalny poziom: 0
+
+================================================================================
+WYNIK
+================================================================================
+Oto zaplanowany prosty obiad dla 4 osób:
+
+### Menu:
+
+1. **Zupa: Zupa pomidorowa z makaronem**
+   - Składniki:
+     - 800 g pomidorów (można użyć z puszki lub świeżych)
+     - 1 cebula
+     - 2 ząbki czosnku
+     - 500 ml bulionu (warzywnego lub drobiowego)
+     - 200 g makaronu (np. nitki)
+     - Sól, pieprz, bazylia do smaku
+   - Przygotowanie:
+     1. Cebulę i czosnek pokroić i zeszklić na oliwie.
+     2. Dodać pomidory i bulion, gotować przez 20 minut.
+     3. Zmiksować na gładką masę, doprawić solą, pieprzem i bazylią.
+     4. Osobno ugotować makaron i dodać do zupy przed podaniem.
+
+2. **Drugie danie: Kurczak pieczony z warzywami**
+   - Składniki:
+     - 4 udka z kurczaka
+     - 500 g ziemniaków
+     - 300 g marchewki
+     - 1 cebula
+     - Przyprawy: sól, pieprz, papryka, tymianek
+   - Przygotowanie:
+     1. Ziemniaki i marchewkę pokroić w kostkę, cebulę w pióra.
+     2. Udka z kurczaka przyprawić solą, pieprzem, papryką i tymiankiem.
+     3. Wszystko ułożyć w naczyniu żaroodpornym, skropić oliwą.
+     4. Piec w temperaturze 180°C przez około 45 minut, aż kurczak będzie złocisty i dobrze upieczony.
+
+3. **Deser: Budyń czekoladowy**
+   - Składniki:
+     - 500 ml mleka
+     - 50 g kakao
+     - 100 g cukru
+     - 40 g skrobi kukurydzianej
+     - 1 łyżeczka wanilii
+   - Przygotowanie:
+     1. Mleko podgrzać w garnku.
+     2. W osobnej misce wymieszać kakao, cukier i skrobię. Dodać trochę zimnego mleka, aby rozpuścić składniki.
+     3. Wlać mieszankę do podgrzanego mleka, gotować na małym ogniu, mieszając, aż zgęstnieje.
+     4. Przelać do miseczek, schłodzić w lodówce przed podaniem.
+
+### Podsumowanie:
+- **Zupa:** Zupa pomidorowa z makaronem
+- **Drugie danie:** Kurczak pieczony z warzywami
+- **Deser:** Budyń czekoladowy
+
+### Czas przygotowania:
+- Zupa: 30 minut
+- Drugie danie: 1 godzina
+- Deser: 15 minut + czas schłodzenia
+
+### Całkowity czas na przygotowanie obiadu: około 2 godziny (w tym czas pieczenia kurczaka). 
+
+Obiad jest prosty, smaczny i wystarczy dla 4 osób.
+
+================================================================================
+WERYFIKACJA
+================================================================================
+
+Status: PASS
+Ocena: 9.0/10.0
+Feedback: Zadanie zostało wykonane bardzo dobrze. Menu jest dobrze zorganizowane i zawiera wszystkie trzy elementy: zupę, drugie danie oraz deser. Składniki są odpowiednio dobrane i proporcje są wystarczające dla czterech osób. Przygotowanie każdego dania zostało jasno opisane w krokach, co ułatwia wykonanie. Czas przygotowania został również dobrze oszacowany, a podsumowanie jest zrozumiałe.
+Problemy: Brak

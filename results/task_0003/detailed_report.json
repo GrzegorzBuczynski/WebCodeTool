@@ -1,0 +1,39 @@
+{
+  "execution_info": {
+    "timestamp": "2026-02-08T05:55:37.206224",
+    "execution_time_seconds": 8.502240419387817,
+    "main_task_id": "task_0003",
+    "main_task_description": "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser."
+  },
+  "statistics": {
+    "total_tasks": 1,
+    "decomposed": 0,
+    "executed_directly": 1,
+    "max_level_reached": 0
+  },
+  "all_tasks": [
+    {
+      "id": "task_0003",
+      "level": 0,
+      "description": "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.",
+      "type": "main",
+      "status": "verified",
+      "verified": true,
+      "result_length": 1604,
+      "result_preview": "Oto zaplanowany prosty obiad dla 4 osób:\n\n### Menu:\n\n**Zupa: Zupa pomidorowa z makaronem**\n- Składniki:\n  - 800 g pomidorów (świeżych lub z puszki)\n  - 1 cebula\n  - 2 ząbki czosnku\n  - 1 litr bulionu warzywnego\n  - 200 g makaronu (np. świderki)\n  - Sól, pieprz, bazylia (do smaku)\n- Przygotowanie:\n  ...",
+      "verification": {
+        "passed": true,
+        "score": 9.5,
+        "feedback": "Zadanie zostało wykonane poprawnie i kompletnie. Menu zawiera wszystkie trzy elementy: zupę, drugie danie i deser, a także szczegółowe składniki i instrukcje przygotowania. Koszt składników został oszacowany, co jest przydatne, a całkowity czas przygotowania jest realistyczny.",
+        "issues": []
+      },
+      "subtasks_count": 0
+    }
+  ],
+  "task_summary": {
+    "total_created": 1,
+    "verified": 1,
+    "failed": 0
+  },
+  "final_result": "Oto zaplanowany prosty obiad dla 4 osób:\n\n### Menu:\n\n**Zupa: Zupa pomidorowa z makaronem**\n- Składniki:\n  - 800 g pomidorów (świeżych lub z puszki)\n  - 1 cebula\n  - 2 ząbki czosnku\n  - 1 litr bulionu warzywnego\n  - 200 g makaronu (np. świderki)\n  - Sól, pieprz, bazylia (do smaku)\n- Przygotowanie:\n  1. Na patelni podsmażyć cebulę i czosnek.\n  2. Dodać pomidory i bulion, gotować przez 20 minut.\n  3. Zmiksować na gładką masę, doprawić.\n  4. Ugotować makaron według instrukcji, dodać do zupy przed podaniem.\n\n**Drugie danie: Kurczak pieczony z ziemniakami i warzywami**\n- Składniki:\n  - 4 udka kurczaka\n  - 800 g ziemniaków\n  - 400 g mieszanki warzyw (np. marchew, brokuły, papryka)\n  - Przyprawy: sól, pieprz, papryka słodka, oliwa z oliwek\n- Przygotowanie:\n  1. Rozgrzać piekarnik do 200°C.\n  2. Ziemniaki pokroić na ćwiartki, warzywa na kawałki.\n  3. Kurczaka przyprawić i ułożyć w naczyniu do pieczenia z ziemniakami i warzywami.\n  4. Polać oliwą, piec przez 45 minut.\n\n**Deser: Krem budyniowy z owocami**\n- Składniki:\n  - 1 opakowanie budyniu waniliowego (40 g)\n  - 500 ml mleka\n  - 200 g owoców sezonowych (np. truskawki, maliny)\n  - Cukier (do smaku)\n- Przygotowanie:\n  1. Ugotować budyń zgodnie z instrukcją, dodać cukier do smaku.\n  2. Po wystudzeniu, podać z pokrojonymi owocami.\n\n### Podsumowanie:\nObiad dla 4 osób składa się z:\n- Zupy pomidorowej z makaronem\n- Pieczonego kurczaka z ziemniakami i warzywami\n- Kremu budyniowego z owocami\n\nKoszt składników (przybliżony):\n- Zupa: 15 zł\n- Drugie danie: 30 zł\n- Deser: 10 zł\n- **Łączny koszt: 55 zł**\n\nObiad można przygotować w około 1,5 godziny."
+}

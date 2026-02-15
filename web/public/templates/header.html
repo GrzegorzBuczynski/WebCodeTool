@@ -1,0 +1,38 @@
+<header class="flex items-center justify-between border-b border-[#3c3c3c] bg-[#2c2c2c] px-3 text-xs">
+  <div class="flex items-center gap-3">
+    <div class="font-semibold tracking-wide">Workspace UI</div>
+    <nav class="relative flex items-center gap-1">
+      <div class="relative">
+        <button id="menu-file-btn" class="rounded px-2 py-1 text-[#d4d4d4] hover:bg-white/10">File</button>
+        <div id="menu-file" class="absolute left-0 top-7 hidden min-w-[180px] rounded border border-[#3c3c3c] bg-[#252526] shadow-xl">
+          <button id="menu-open-root" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/10">
+            <span>📁</span>
+            <span>Select folder…</span>
+          </button>
+        </div>
+      </div>
+      <div class="relative">
+        <button id="menu-view-btn" class="rounded px-2 py-1 text-[#d4d4d4] hover:bg-white/10">View</button>
+        <div id="menu-view" class="absolute left-0 top-7 hidden min-w-[220px] w-max rounded border border-[#3c3c3c] bg-[#252526] shadow-xl" style="white-space: nowrap;">
+          <button id="menu-expand-all" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/10" style="white-space: nowrap;">
+            <span>▾▾</span>
+            <span>Expand all levels</span>
+          </button>
+          <button id="menu-collapse-all" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/10" style="white-space: nowrap;">
+            <span>▸▸</span>
+            <span>Collapse all levels</span>
+          </button>
+          <button id="menu-expand-level" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/10" style="white-space: nowrap;">
+            <span>▾</span>
+            <span>Expand level</span>
+          </button>
+          <button id="menu-collapse-level" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/10" style="white-space: nowrap;">
+            <span>▸</span>
+            <span>Collapse level</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="text-[#8a8a8a]" id="status-text">Loading...</div>
+</header>

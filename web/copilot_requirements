@@ -1,0 +1,38 @@
+Wymagania projektu (8 lutego 2026):
+
+1) Backend (Python)
+- Framework: FastAPI
+- Uruchamianie: uvicorn backend.app:app
+- Endpointy API: /api/fs/*, /api/results, /api/task/:id, /api/run, /api/status
+- Bezpieczne ograniczenie dostępu do katalogów (root projektu)
+
+2) Frontend (Node + Tailwind)
+- Tailwind CLI do budowy CSS
+- Skrypty: npm run build:css, npm run watch:css
+- UI wzorowane na VS Code (menu, activity bar, explorer, editor, panel)
+
+3) Funkcje
+- Pojedyncza odpowiedzialność
+- Maksymalnie 35 linii na funkcję
+
+4) Explorer plików
+- Przeglądanie plików z backendu
+- Wybór katalogu root z menu Plik
+
+5) Modularność
+- Reusable komponenty
+- Backend: podział na routes, services, utils
+	* routes/fs_routes.py - endpointy systemu plików
+	* routes/task_routes.py - endpointy zadań
+	* services/fs_service.py - logika drzewa plików
+	* services/task_service.py - logika zadań
+	* utils/path_utils.py - walidacja ścieżek
+- Frontend: podział na moduły ES6
+	* modules/state.js - zarządzanie stanem
+	* modules/api.js - komunikacja z backend
+	* modules/explorer.js - komponent drzewa plików
+	* modules/tabs.js - komponent zakładek
+	* modules/modal.js - modal wyboru folderu
+	* modules/editor.js - komponent edytora
+	* modules/tasks.js - komponent listy zadań
+	* app.js - główny entry point

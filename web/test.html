@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple HTML Page</title>
+</head>
+<body>
+    <div class="flex h-full flex-col gap-0 overflow-hidden bg-[#1e1e1e]">
+      <div class="flex items-center justify-between border-b border-[#3c3c3c] bg-[#252526] px-3 py-2 text-xs flex-shrink-0">
+        <div id="editor-path" class="text-[#8a8a8a]"></div>
+        <div class="flex items-center gap-2">
+          <span id="editor-dirty-badge" class="rounded-full px-2 py-0.5 text-[10px]"></span>
+          <button id="editor-save-btn" class="rounded border border-[#3c3c3c] bg-[#1e1e1e] px-2 py-1 hover:bg-white/10">Save</button>
+          <button id="editor-reload-btn" class="rounded border border-[#3c3c3c] bg-[#1e1e1e] px-2 py-1 hover:bg-white/10">Reload</button>
+        </div>
+      </div>
+      <textarea id="editor-textarea" rows="20" cols="200" class="flex-1 w-full resize-none bg-[#111] p-3 text-[13px] leading-6 text-[#d4d4d4] outline-none focus:ring-1 focus:ring-[#007acc] overflow-auto"></textarea>
+    </div>
+    <script>
+      const file = { path: "untitled.txt" };
+      let isDirty = false;
+
+      const pathEl = document.getElementById("editor-path");
+      const badgeEl = document.getElementById("editor-dirty-badge");
+      const saveBtn = document.getElementById("editor-save-btn");
+
+      function renderState() {
+        pathEl.textContent = file.path;
+        badgeEl.textContent = isDirty ? "UNSAVED" : "SAVED";
+        badgeEl.className = `rounded-full px-2 py-0.5 text-[10px] ${
+          isDirty ? "bg-amber-500/20 text-amber-300" : "bg-emerald-500/20 text-emerald-300"
+        }`;
+        saveBtn.disabled = !isDirty;
+      }
+
+      renderState();
+    </script>
+</body>
+</html>

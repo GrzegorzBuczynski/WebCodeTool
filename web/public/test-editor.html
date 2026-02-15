@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor Test</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-[#1e1e1e] text-[#d4d4d4] h-screen">
+  <div id="tabs"></div>
+  <div id="editor-content" class="h-screen"></div>
+  <div id="panel-content" class="hidden"></div>
+
+  <script type="module">
+    import { state } from './js/modules/state.js';
+    import { renderEditor } from './js/modules/editor.js';
+
+    // Test data
+    state.activeView = 'files';
+    state.selectedFilePath = 'test.txt';
+    state.openFiles = [{
+      path: 'test.txt',
+      size: 500,
+      content: 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12\nLine 13\nLine 14\nLine 15',
+      draft: null,
+      isDirty: false
+    }];
+
+    renderEditor();
+  </script>
+</body>
+</html>

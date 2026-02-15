@@ -1,0 +1,11 @@
+{
+  "name": "workspace-ui",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/tailwind.css -o ./public/styles.css",
+    "watch:css": "tailwindcss -i ./src/tailwind.css -o ./public/styles.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.14"
+  }
+}

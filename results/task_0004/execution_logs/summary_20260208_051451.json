@@ -1,0 +1,13 @@
+{
+  "execution_id": "task_0004_20260208_051451",
+  "task_id": "task_0004",
+  "task_description": "Zaplanuj prosty obiad dla 4 osób: zupa, drugie danie i deser.",
+  "timestamp": "20260208_051451",
+  "execution_time_seconds": 10.163094997406006,
+  "statistics": {
+    "total_tasks": 1,
+    "decomposed": 0,
+    "executed_directly": 1,
+    "max_level_reached": 0
+  }
+}
