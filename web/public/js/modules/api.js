@@ -41,6 +41,31 @@ export async function saveFile(filePath, content) {
   return data;
 }
 
+export async function createFile(filePath, content = '') {
+  const data = await fetchJson('/api/fs/file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: filePath, content })
+  });
+  return data;
+}
+
+export async function deleteFile(filePath) {
+  const data = await fetchJson(`/api/fs/file?path=${encodeURIComponent(filePath)}`, {
+    method: 'DELETE'
+  });
+  return data;
+}
+
+export async function createFolder(folderPath) {
+  const data = await fetchJson('/api/fs/mkdir', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: folderPath })
+  });
+  return data;
+}
+
 export async function loadTasks() {
   const data = await fetchJson('/api/results');
   return { tasks: data.tasks || [], total: data.total || 0 };

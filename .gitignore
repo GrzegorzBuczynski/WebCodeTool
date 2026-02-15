@@ -51,6 +51,7 @@ coverage.xml
 .pytest_cache/
 cover/
 web/node_modules
+node_modules
 results
 # Translations
 *.mo
@@ -137,6 +138,7 @@ celerybeat.pid
 
 # Environments
 .env
+config/.env
 .envrc
 .venv
 env/

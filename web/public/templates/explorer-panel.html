@@ -1,7 +1,11 @@
 <aside class="flex flex-col overflow-hidden border-r border-[#3c3c3c] bg-[#2d2d2d] text-xs">
   <div class="flex items-center justify-between border-b border-[#3c3c3c] px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#8a8a8a]">
     <span id="sidebar-title">Explorer</span>
-    <button id="refresh-btn" class="rounded px-2 py-1 text-[#8a8a8a] hover:bg-white/10">⟳</button>
+    <div class="flex items-center gap-2">
+      <button id="new-file-btn" class="rounded px-2 py-1 text-[#8a8a8a] hover:bg-white/10" title="New File">📄+</button>
+      <button id="new-folder-btn" class="rounded px-2 py-1 text-[#8a8a8a] hover:bg-white/10" title="New Folder">📁+</button>
+      <button id="refresh-btn" class="rounded px-2 py-1 text-[#8a8a8a] hover:bg-white/10" title="Refresh">⟳</button>
+    </div>
   </div>
 
   <div class="flex-1 overflow-auto p-3">

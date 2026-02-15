@@ -1,6 +1,9 @@
 /**
  * Server Express - backend dla UI systemu wieloagentowego
  */
+// Załaduj zmienne środowiskowe z głównego katalogu projektu
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -17,9 +20,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ścieżka do folderu results
+// Ścieżka do folderu results i workspace
 const RESULTS_DIR = path.join(__dirname, '..', 'results');
-const ROOT_DIR = path.join(__dirname, '..');
+const WORKSPACE_DIR = process.env.WORKSPACE_DIR || path.join(__dirname, '..');
+const ROOT_DIR = path.resolve(WORKSPACE_DIR);
 const FS_EXCLUDE = new Set(['node_modules', 'venv', '__pycache__', '.git', 'results']);
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
@@ -203,6 +207,22 @@ app.post('/api/run', (req, res) => {
 });
 
 /**
+ * GET /api/fs/root - aktualny katalog główny
+ */
+app.get('/api/fs/root', (req, res) => {
+  res.json({ root: WORKSPACE_DIR });
+});
+
+/**
+ * POST /api/fs/root - ustaw katalog główny (opcjonalne)
+ */
+app.post('/api/fs/root', (req, res) => {
+  const { root } = req.body;
+  // W prostej implementacji zawsze używamy WORKSPACE_DIR z .env
+  res.json({ root: root || WORKSPACE_DIR });
+});
+
+/**
  * GET /api/fs/tree - drzewo plików projektu
  */
 app.get('/api/fs/tree', (req, res) => {
@@ -244,6 +264,88 @@ app.get('/api/fs/file', (req, res) => {
 
     const content = fs.readFileSync(target, 'utf-8');
     res.json({ path: relPath, size: stat.size, content });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/fs/file - zapisz/utwórz plik
+ */
+app.post('/api/fs/file', (req, res) => {
+  try {
+    const { path: relPath, content } = req.body;
+    if (!relPath) {
+      return res.status(400).json({ error: 'Brak parametru path' });
+    }
+    if (content === undefined) {
+      return res.status(400).json({ error: 'Brak zawartości pliku' });
+    }
+
+    const target = safeResolve(relPath);
+    
+    // Ensure directory exists
+    const dir = path.dirname(target);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    fs.writeFileSync(target, content, 'utf-8');
+    const stat = fs.statSync(target);
+    
+    res.json({ 
+      path: relPath, 
+      size: stat.size, 
+      message: 'Plik zapisany pomyślnie' 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * DELETE /api/fs/file - usuń plik
+ */
+app.delete('/api/fs/file', (req, res) => {
+  try {
+    const relPath = req.query.path;
+    if (!relPath) {
+      return res.status(400).json({ error: 'Brak parametru path' });
+    }
+
+    const target = safeResolve(relPath);
+    if (!fs.existsSync(target)) {
+      return res.status(404).json({ error: 'Plik nie istnieje' });
+    }
+
+    if (fs.statSync(target).isDirectory()) {
+      return res.status(400).json({ error: 'Nie można usunąć katalogu jako pliku' });
+    }
+
+    fs.unlinkSync(target);
+    res.json({ message: 'Plik usunięty pomyślnie', path: relPath });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/fs/mkdir - utwórz katalog
+ */
+app.post('/api/fs/mkdir', (req, res) => {
+  try {
+    const { path: relPath } = req.body;
+    if (!relPath) {
+      return res.status(400).json({ error: 'Brak parametru path' });
+    }
+
+    const target = safeResolve(relPath);
+    if (fs.existsSync(target)) {
+      return res.status(409).json({ error: 'Katalog już istnieje' });
+    }
+
+    fs.mkdirSync(target, { recursive: true });
+    res.json({ message: 'Katalog utworzony pomyślnie', path: relPath });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
