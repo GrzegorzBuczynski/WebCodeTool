@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  webcodetool:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - MAX_ITERATIONS=10
+      - ENABLE_CODE_EXECUTION=true
+    volumes:
+      - ./workspace:/workspace
+    restart: unless-stopped
